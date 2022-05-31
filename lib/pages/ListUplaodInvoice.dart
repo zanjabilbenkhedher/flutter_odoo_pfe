@@ -10,6 +10,11 @@ import 'package:odoo_api/odoo_user_response.dart';
 import 'image.dart';
 
 
+import 'UploadInvoice.dart';
+import 'login_page.dart';
+
+
+
 
 class MyHomePage extends StatefulWidget {
   MyHomePage({Key key,  this.title}) : super(key: key);
@@ -49,7 +54,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var client = OdooClient("http://10.0.2.2:8014");
   Future<List> _getOrders() async {
     final domain = [];
-    var fields = ["id", "name", "login"];
+    var fields = ["name_seq2", "last_date"];
     AuthenticateCallback auth = await client.authenticate(
         "base", "base", "base");
     if (auth.isSuccess) {
@@ -59,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
       print("Login failed");
     }
     OdooResponse result =
-        await client.searchRead("res.users", domain, fields);
+        await client.searchRead("facture.model.activity", domain, fields);
     if (!result.hasError()) {
       print("Successful");
       setState(() {
@@ -88,6 +93,7 @@ class _MyHomePageState extends State<MyHomePage> {
               fontSize: 15.0,
               color: Colors.black,
             ),
+            
             decoration: InputDecoration(
               contentPadding: EdgeInsets.all(10.0),
               border: OutlineInputBorder(
@@ -113,11 +119,11 @@ class _MyHomePageState extends State<MyHomePage> {
               _debouncer.run(() {
                 setState(() {
                   listdata = data
-                      .where((u) => (u['name']
+                      .where((u) => (u['name_seq2']
                               .toString()
                               .toLowerCase()
                               .contains(string.toLowerCase()) ||
-                          u['id']
+                          u['last_date']
                               .toString()
                               .toLowerCase()
                               .contains(string.toLowerCase())))
@@ -126,14 +132,78 @@ class _MyHomePageState extends State<MyHomePage> {
               });
             },
           ),
-          flexibleSpace: Container(
-            decoration: BoxDecoration(
-                gradient: LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: <Color>[Colors.blue, Colors.blue])),
+        elevation: 0.5,
+        iconTheme: IconThemeData(color: Colors.white),
+        flexibleSpace:Container(
+          decoration: BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: <Color>[Theme.of(context).primaryColor, Theme.of(context).accentColor,]
+              )
           ),
         ),
+         
+        ),
+            drawer: Drawer(
+        child: Container(
+          decoration:BoxDecoration(
+              gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  stops: [0.0, 1.0],
+                  colors: [
+                    Theme.of(context).primaryColor.withOpacity(0.2),
+                    Theme.of(context).accentColor.withOpacity(0.5),
+                  ]
+              )
+          ) ,
+          child: ListView(
+            children: [
+              DrawerHeader(
+                decoration: BoxDecoration(
+                  color: Theme.of(context).primaryColor,
+                  gradient: LinearGradient(
+                    begin: Alignment.topLeft,
+                    end: Alignment.bottomRight,
+                    stops: [0.0, 1.0],
+                    colors: [ Theme.of(context).primaryColor,Theme.of(context).accentColor,],
+                  ),
+                ),
+                child: Container(
+                  alignment: Alignment.bottomLeft,
+                  child: Text("INVOICE RECOGNITION",
+                    style: TextStyle(fontSize: 25,color: Colors.white, fontWeight: FontWeight.bold),
+                  ),
+                ),
+              ), 
+              ListTile(
+                leading: Icon(Icons.archive_outlined , color: Theme.of(context).accentColor),
+                title: Text('Upload your invoice',style: TextStyle(color: Theme.of(context).accentColor),),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => UploadInvoice()),);
+                },
+              ), 
+              Divider(color: Theme.of(context).primaryColor, height: 1,),
+              ListTile(
+                leading: Icon(Icons.account_circle_outlined , color: Theme.of(context).accentColor,),
+                title: Text('List of uploaded invoices',style: TextStyle(color: Theme.of(context).accentColor),),
+                onTap: () {
+                   Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()),);
+                },
+              ),
+                Divider(color: Theme.of(context).primaryColor, height: 1,),
+                   ListTile(
+                leading: Icon(Icons.logout_rounded, color: Theme.of(context).accentColor,),
+                title: Text('Logout',style: TextStyle(color: Theme.of(context).accentColor),),
+                onTap: () {
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => LoginPage()),);
+                },
+              ),
+            ],
+          ),
+        ),
+      ),
         body: check
             ? Center(
                 child: CircularProgressIndicator(),
@@ -160,7 +230,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                       height: 10,
                                     ),
                                     Text(
-                                      listdata[index]['name'].toString(),
+                                      listdata[index]['name_seq2'].toString(),
                                       style: TextStyle(
                                         fontSize: 20,
                                       ),
@@ -168,20 +238,21 @@ class _MyHomePageState extends State<MyHomePage> {
                                     SizedBox(
                                       height: 10,
                                     ),
+                                 
                                     Row(
                                       children: <Widget>[
-                                        Icon(Icons.monetization_on),
+                                        Icon(Icons.access_alarm),
                                         SizedBox(
                                           width: 10,
                                         ),
                                         Text(
-                                          listdata[index]['id']
+                                          listdata[index]['last_date']
                                               .toString(),
                                           style: TextStyle(
                                               fontWeight: FontWeight.bold),
                                         ),
                                       ],
-                                    ),
+                                    ),     
                                   ],
                                 ),
                               ),
@@ -190,4 +261,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         }),
                   ));
   }
+  Image imageFromBase64String(String base64String) {
+  return Image.memory(base64Decode(base64String));
+}
 }

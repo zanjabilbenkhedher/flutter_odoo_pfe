@@ -1,35 +1,41 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'ListUser.dart';
+import 'ListUplaodInvoice.dart';
 import 'UploadInvoice.dart';
 import 'login_page.dart';
 import 'widgets/header_widget.dart';
 
 class ProfilePage extends StatefulWidget{
  
-  String login;
+
+  String database;
+  String email;
+  String name;
  
 
-  ProfilePage({Key key,this.login}) : super(key: key);
+  ProfilePage({Key key,this.database,this.email,this.name}) : super(key: key);
 
 
   @override
-  State<StatefulWidget> createState() =>_ProfilePageState(login);
+  State<StatefulWidget> createState() =>_ProfilePageState(database,name,email);
+  
 }
 
 class _ProfilePageState extends State<ProfilePage>{
-  String login;
+  String database;
+  String name;
+  String email;
   double  _drawerIconSize = 24;
   double _drawerFontSize = 17;
   
-  _ProfilePageState(this.login);
+  _ProfilePageState(this.database,this.name,this.email);
   
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Profile Page",
+        title: Text(("Welcome ${name}"),
           style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
         ),
         elevation: 0.5,
@@ -43,25 +49,6 @@ class _ProfilePageState extends State<ProfilePage>{
               )
           ),
         ),
-        actions: [
-          Container(
-            margin: EdgeInsets.only( top: 16, right: 16,),
-            child: Stack(
-              children: <Widget>[
-                Icon(Icons.notifications),
-                Positioned(
-                  right: 0,
-                  child: Container(
-                    padding: EdgeInsets.all(1),
-                    decoration: BoxDecoration( color: Colors.red, borderRadius: BorderRadius.circular(6),),
-                    constraints: BoxConstraints( minWidth: 12, minHeight: 12, ),
-                    child: Text( '5', style: TextStyle(color: Colors.white, fontSize: 8,), textAlign: TextAlign.center,),
-                  ),
-                )
-              ],
-            ),
-          )
-        ],
       ),
       drawer: Drawer(
         child: Container(
@@ -105,7 +92,7 @@ class _ProfilePageState extends State<ProfilePage>{
               Divider(color: Theme.of(context).primaryColor, height: 1,),
               ListTile(
                 leading: Icon(Icons.account_circle_outlined , size: _drawerIconSize,color: Theme.of(context).accentColor,),
-                title: Text('List of Users',style: TextStyle(fontSize: _drawerFontSize,color: Theme.of(context).accentColor),),
+                title: Text('List of uploaded invoices',style: TextStyle(fontSize: _drawerFontSize,color: Theme.of(context).accentColor),),
                 onTap: () {
                    Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()),);
                 },
@@ -159,9 +146,9 @@ class _ProfilePageState extends State<ProfilePage>{
                           child: Text(
                             "User Information",
                             style: TextStyle(
-                              color: Colors.black87,
+                              color: Color.fromARGB(255, 181, 41, 194),
                               fontWeight: FontWeight.w500,
-                              fontSize: 16,
+                              fontSize: 20,
                             ),
                             textAlign: TextAlign.left,
                           ),
@@ -180,26 +167,30 @@ class _ProfilePageState extends State<ProfilePage>{
                                         ListTile(
                                           contentPadding: EdgeInsets.symmetric(
                                               horizontal: 12, vertical: 4),
-                                          leading: Icon(Icons.my_location),
-                                          title: Text(login),
-                                          subtitle: Text(""),
+                                          leading: Icon(Icons.account_circle_rounded),
+                                          title: Text("User Name",
+                                                 style: TextStyle(
+                                                 fontSize: 20, fontWeight: FontWeight.bold, color: Colors.black87, ),
+                                          ),
+                                          subtitle: Text(name),
+                                        ),
+                                        ListTile(
+                                          leading: Icon(Icons.account_tree_rounded ),
+                                          title: Text("Database Name",
+                                            style: TextStyle(
+                                                 fontSize: 20, fontWeight: FontWeight.bold,color: Colors.black87,),
+                                          ),
+                                          subtitle: Text(database),
                                         ),
                                         ListTile(
                                           leading: Icon(Icons.email),
-                                          title: Text("hh"),
-                                          subtitle: Text(""),
+                                          title: Text("Email",
+                                            style: TextStyle(
+                                                 fontSize: 20, fontWeight: FontWeight.bold,color: Colors.black87 ),
+                                          ),
+                                          subtitle: Text(email),
                                         ),
-                                        ListTile(
-                                          leading: Icon(Icons.phone),
-                                          title: Text("Phone"),
-                                          subtitle: Text(""),
-                                        ),
-                                        ListTile(
-                                          leading: Icon(Icons.person),
-                                          title: Text("About Me"),
-                                          subtitle: Text(
-                                              ""),
-                                        ),
+                                      
                                       ],
                                     ),
                                   ],
